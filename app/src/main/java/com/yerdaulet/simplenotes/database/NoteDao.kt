@@ -31,7 +31,7 @@ interface NoteDao {
      * @param noteId the id of the note to be deleted
      */
     @Query("delete from database_note where id = :noteId")
-    fun deteleNote(noteId:Int)
+    fun deleteNote(noteId:Int)
 
     /**
      * Delete the Notes with the given ids from the database

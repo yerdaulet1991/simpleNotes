@@ -23,15 +23,15 @@ import com.yerdaulet.simplenotes.domain.Note
  */
 
 @Entity(tableName = "database_note")
-data class DatabaseNote (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int?,
-    val title: String,
-    val text: String,
-    val date: Long?,
-    val reminder: Long?,
-    val started: Boolean,
-    val color: Int
+data class DatabaseNote(
+        @PrimaryKey(autoGenerate = true)
+        val id: Int?,
+        val title: String,
+        val text: String,
+        val date: Long?,
+        val reminder: Long?,
+        val started: Boolean,
+        val color: Int
 ) {
     companion object {
         /**
@@ -41,48 +41,40 @@ data class DatabaseNote (
          * @return a database entity
          */
         fun toDatabaseEntry(note: Note): DatabaseNote {
-            return DatabaseNote(
-                note.id,
-                note.title,
-                note.text,
-                note.date,
-                note.reminder,
-                note.started,
-                note.color
-            )
+            return DatabaseNote(note.id, note.title, note.text, note.date, note.reminder, note.started, note.color)
         }
     }
 
     /**
-     * Map database entity to domain model
+     * Map Database entity to domain model
      *
      * @return a domain model
      */
     fun asDomainModelEntry(): Note {
         return Note(id, title, text, date, reminder, started, color)
     }
+}
 
-    /**
-     * Map list of DatabaseNotes to list of domain entities
-     *
-     * @return a list of Notes
-     */
-    fun List<DatabaseNote>.asDomainModel(): List<Note> {
-        return map {
-            Note(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
-        }
+/**
+ * Map list of DatabaseNotes to list of domain entities
+ *
+ * @return a list of Notes
+ */
+fun List<DatabaseNote>.asDomainModel(): List<Note> {
+    return map {
+        Note(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
     }
+}
 
-    /** Map list of domain notes to list of DatabaseNotes
-     *
-     * @return a list of DatabaseNotes
-     */
-    fun List<Note>.toDatabaseList(): List<DatabaseNote> {
-        return map {
-            DatabaseNote(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
-        }
+/**
+ * Map list of domain notes to list of DatabaseNotes
+ *
+ * @return a list of DatabaseNotes
+ */
+fun List<Note>.toDatabaseList(): List<DatabaseNote> {
+    return map {
+        DatabaseNote(it.id, it.title, it.text, it.date, it.reminder, it.started, it.color)
     }
-
 }
 
 
