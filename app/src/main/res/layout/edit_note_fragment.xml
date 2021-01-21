@@ -1,13 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.editnote.EditNoteFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <data>
+
+        <variable
+            name="editviewmodel"
+            type="com.yerdaulet.simplenotes.viewmodels.EditNoteViewModel" />
+
+        <import type="com.yerdaulet.simplenotes.util.UtilKt" />
+
+        <import type="androidx.databinding.ObservableField" />
+
+        <import type="com.yerdaulet.simplenotes.util.ReminderState" />
+
+        <import type="com.yerdaulet.simplenotes.util.ReminderCompletion" />
+
+        <variable
+            name="reminderState"
+            type="ObservableField&lt;ReminderState>" />
+
+        <variable
+            name="reminderCompletion"
+            type="ObservableField&lt;ReminderCompletion>" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editNoteLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:background="@{editviewmodel.noteBeingModified.color}"
+        android:backgroundTint="#27FFFFFF"
+        android:backgroundTintMode="screen">
 
-</FrameLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textNoteTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/note_title"
+            android:inputType="textMultiLine"
+            android:maxLength="50"
+            android:text="@={editviewmodel.noteBeingModified.title}"
+            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textNoteText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            android:background="@null"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/note_text"
+            android:inputType="textMultiLine"
+            android:text="@={editviewmodel.noteBeingModified.text}"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintBottom_toTopOf="@id/reminderCard"
+            app:layout_constraintEnd_toEndOf="@+id/textNoteTitle"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/textNoteTitle"
+            app:layout_constraintTop_toBottomOf="@+id/textNoteTitle" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/reminderCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@{editviewmodel.noteBeingModified.color}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textNoteText">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/textNoteReminder"
+                    style="?attr/textAppearanceBody2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:text="@{UtilKt.formatReminderDate(editviewmodel.noteBeingModified.reminder)}"
+                    app:drawableStartCompat="@drawable/ic_baseline_alarm_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:visible="@{reminderState == reminderState.HAS_REMINDER}"
+                    app:strikeThrough="@{reminderCompletion == reminderCompletion.COMPLETED}" />
+                <TextView
+                    android:id="@+id/textNoteNoReminder"
+                    style="?attr/textAppearanceBody2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:text="@string/set_reminder"
+                    app:drawableStartCompat="@drawable/ic_baseline_alarm_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:visible="@{reminderState == reminderState.NO_REMINDER}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
