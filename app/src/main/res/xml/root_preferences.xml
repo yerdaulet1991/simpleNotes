@@ -1,34 +1,29 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory app:title="@string/category_display">
 
         <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
+            app:defaultValue="@string/default_theme"
+            app:dialogTitle="@string/choose_theme"
+            app:entries="@array/pref_theme"
+            app:entryValues="@array/pref_theme_values"
+            app:icon="@drawable/ic_baseline_brightness"
+            app:key="@string/key_theme"
+            app:title="@string/theme"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
-
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+    <PreferenceCategory app:title="About">
+        <Preference
+            android:icon="@drawable/ic_baseline_person_outline_24"
+            app:summary="Yerdaulet"
+            app:title="Developer">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/yerdaulet1991" />
+        </Preference>
 
     </PreferenceCategory>
 
