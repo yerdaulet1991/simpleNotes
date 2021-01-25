@@ -59,7 +59,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
     fun deleteNotes() {
         val idList = ArrayList<Int>()
         for (note in getNotesToDelete().value!!) {
-            if (note.started && note.reminder > currentDate().timeInMillis) {
+            if (note.started && note.reminder!! > currentDate().timeInMillis) {
                 cancelAlarm(context, note)
             }
             idList.add(note.id!!)
@@ -118,7 +118,7 @@ class NoteListViewModel @ViewModelInject internal constructor(
     private fun getSavedFilter(): MutableLiveData<Int> {
         return savedStateHandle.getLiveData(FILTER_SAVED_STATE_KEY, NO_FILTER)
     }
-    private fun setNotesToDelete(noteList: List<Note>){
+    fun setNotesToDelete(noteList: List<Note>){
         savedStateHandle.set(NOTES_TO_DELETE,
             noteList.toDatabaseList().asDomainModel())
     }

@@ -17,6 +17,7 @@ import com.yerdaulet.simplenotes.work.cancelAlarm
 import com.yerdaulet.simplenotes.work.createSchedule
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collect
 
 class EditNoteViewModel @AssistedInject constructor(
     private val context: Context,
@@ -31,7 +32,7 @@ class EditNoteViewModel @AssistedInject constructor(
     val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
 
     private var _noteBeingModified = MutableLiveData<Note?>()
-    val noteBeingModified: LiveData<Note> get() = _noteBeingModified
+    val noteBeingModified: LiveData<Note?> get() = _noteBeingModified
 
     private var _mIsEdit = MutableLiveData<Boolean>()
     val mIsEdit: LiveData<Boolean> get() = _mIsEdit
@@ -44,9 +45,9 @@ class EditNoteViewModel @AssistedInject constructor(
         } else {
             onNoteInserted()
             viewModelScope.launch {
-                noteRepository.getNote(selectedNoteId!!).collect { note ->
-                    _noteBeingModified.value = note
-                    selectedNote = toDatabaseEntry(note!!).asDomainModelEntry()
+                noteRepository.getNote(selectedNoteId!!).collect { Note ->
+                    _noteBeingModified.value = Note
+                    selectedNote = toDatabaseEntry(Note!!).asDomainModelEntry()
                 }
             }
         }
