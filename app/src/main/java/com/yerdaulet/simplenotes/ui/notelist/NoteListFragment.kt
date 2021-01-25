@@ -1,5 +1,6 @@
 package com.yerdaulet.simplenotes.ui.notelist
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
@@ -22,6 +25,7 @@ import com.yerdaulet.simplenotes.util.calculateNoOfColumns
 import com.yerdaulet.simplenotes.viewmodels.NoteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import org.jetbrains.anko.design.longSnackbar
 
 /**
  * A Fragment representing the list of user-created notes
@@ -81,6 +85,58 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener{
         return binding.root
     }
 
+    private fun openAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(
+                resources.getQuantityString(
+                    R.plurals.delete_dialog_title,
+                    noteListViewModel.notesToDelete.value!!.size,
+                    noteListViewModel.notesToDelete.value!!.size
+                )
+            )
+            .setMessage(getString(R.string.undo_delete_snackbar))
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                deleteNotes()
+                undoDeleteNotes()
+            }
+            .show()
+    }
+
+    private fun undoDeleteNotes() {
+        layout.longSnackbar(resources.getQuantityString(
+            R.plurals.undo_delete_snackbar_message,
+            noteListViewModel.notesToDelete.value!!.size,
+            noteListViewModel.notesToDelete.value!!.size), getString(R.string.undo)) {
+            insertNotes()
+        }
+    }
+
+    private fun insertNotes() {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                if (noteListViewModel.notesToDelete.value!!.size == 1) {
+                    noteListViewModel.insertNote()
+                } else {
+                    noteListViewModel.insertNotes()
+                }
+            }
+        }
+    }
+
+    private fun deleteNotes() {
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                if (noteListViewModel.notesToDelete.value!!.size == 1) {
+                    noteListViewModel.deleteNote()
+                } else {
+                    noteListViewModel.deleteNotes()
+                }
+                adapter.actionMode?.finish()
+            }
+        }
+    }
+
     private fun observeViewModel() {
         noteListViewModel.filteredNotes.observe(viewLifecycleOwner) { noteList ->
             noteList?.let {
@@ -100,12 +156,34 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.fab.setOnClickListener{
-            findNavController().navigate(R.id.)
+            findNavController().navigate(R.id.action_noteListFragment_to_editNoteFragment)
         }
+
+        ArrayAdapter.createFromResource(
+            activity?.baseContext!!,
+            R.array.filter_array,
+            R.layout.spinner_item,
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerNoteFilter.apply {
+                this.adapter = adapter
+                onItemSelectedListener = this@NoteListFragment
+            }
+        }
+
+        uiScope = CoroutineScope(Dispatchers.Default)
+
+        _layout = binding.noteListLayout
     }
 
     private fun shareNote(note: Note) {
-
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "${note.title}\n\n${note.text}")
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Share Via")
+        startActivity(shareIntent)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -115,11 +193,28 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener{
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("Not yet implemented")
+        return
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        TODO("Not yet implemented")
+        updateList(parent, position)
+    }
+
+    private fun updateList(parent: AdapterView<*>?, pos: Int) {
+        val itemArray = resources.getStringArray(R.array.filter_array)
+        with(noteListViewModel) {
+            when (parent?.getItemAtPosition(pos)) {
+                itemArray[1] -> setFilter(1)
+                itemArray[2] -> setFilter(2)
+                itemArray[3] -> setFilter(3)
+                else -> setFilter(4)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
