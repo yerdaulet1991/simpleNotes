@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import com.yerdaulet.simplenotes.R
+import com.yerdaulet.simplenotes.adapters.NotesAdapter
+import com.yerdaulet.simplenotes.databinding.NoteListFragmentBinding
 import com.yerdaulet.simplenotes.viewmodels.NoteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -22,11 +25,11 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener{
 
     private val noteListViewModel: NoteListViewModel by viewModels()
     private lateinit var uiScope: CoroutineScope
-    private var _binding: FragmentNoteListBinding? = null
+    private var _binding: NoteListFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: NotesAdapter
-    private _layout: ConstraintLayout? = null
-    private layout get() = _layout!!
+    private var _layout: ConstraintLayout? = null
+    private val layout get() = _layout!!
 
 
 
