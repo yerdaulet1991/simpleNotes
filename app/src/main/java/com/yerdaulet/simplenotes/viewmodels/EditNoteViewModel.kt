@@ -25,7 +25,7 @@ class EditNoteViewModel @AssistedInject constructor(
 ) :
     ViewModel() {
     private lateinit var selectedNote: Note
-    private lateinit var scheduleNote: Note
+    private lateinit var scheduledNote: Note
 
     val reminderState = ObservableField(ReminderState.NO_REMINDER)
     val reminderCompletion = ObservableField(ReminderCompletion.ONGOING)
@@ -91,8 +91,8 @@ class EditNoteViewModel @AssistedInject constructor(
                 updateNote(_noteBeingModified.value!!)
             } else {
                 runBlocking {
-                    noteRepository.getLatestNote().collect { noteEntry ->
-                        scheduledNote = noteEntry!!
+                    noteRepository.getLatestNote().collect { note ->
+                        scheduledNote = note!!
                     }
                 }
                 createSchedule(context, scheduledNote)
