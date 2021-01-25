@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.fragment.app.viewModels
 import com.yerdaulet.simplenotes.R
 import com.yerdaulet.simplenotes.adapters.NotesAdapter
@@ -32,18 +34,15 @@ class NoteListFragment : Fragment(), AdapterView.OnItemSelectedListener{
     private val layout get() = _layout!!
 
 
-
-    companion object {
-        fun newInstance() = NoteListFragment()
-
-    }
-
     private lateinit var viewModel: NoteListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        setHasOptionsMenu(true)
+        requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            .setDrawerLockMode(LOCK_MODE_UNLOCKED)
         return inflater.inflate(R.layout.note_list_fragment, container, false)
     }
 

@@ -14,7 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.davenet.notely.views.MaskedCardView
+        <com.yerdaulet.simplenotes.views.MaskedCardView
             android:id="@+id/item_card"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -114,6 +114,6 @@
                     app:layout_constraintVertical_bias="1.0" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.davenet.notely.views.MaskedCardView>
+        </com.yerdaulet.simplenotes.views.MaskedCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

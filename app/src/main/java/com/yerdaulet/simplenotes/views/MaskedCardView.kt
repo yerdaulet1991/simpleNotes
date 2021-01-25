@@ -29,7 +29,7 @@ class MaskedCardView @JvmOverloads constructor(
 
     private val rectF = RectF(0f, 0f, 0f, 0f)
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         canvas.clipPath(path)
         super.onDraw(canvas)
     }
