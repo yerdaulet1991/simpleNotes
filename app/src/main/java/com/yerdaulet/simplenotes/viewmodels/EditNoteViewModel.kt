@@ -20,11 +20,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.collect
 
 class EditNoteViewModel @AssistedInject constructor(
-    private val context: Context,
-    private val noteRepository: NoteRepository,
-    @Assisted private val selectedNoteId: Int?
+        private val context: Context,
+        private val noteRepository: NoteRepository,
+        @Assisted private val selectedNoteId: Int?
 ) :
-    ViewModel() {
+        ViewModel() {
     private lateinit var selectedNote: Note
     private lateinit var scheduledNote: Note
 
@@ -45,40 +45,41 @@ class EditNoteViewModel @AssistedInject constructor(
         } else {
             onNoteInserted()
             viewModelScope.launch {
-                noteRepository.getNote(selectedNoteId!!).collect { Note ->
-                    _noteBeingModified.value = Note
-                    selectedNote = toDatabaseEntry(Note!!).asDomainModelEntry()
+                noteRepository.getNote(selectedNoteId!!).collect { noteEntry ->
+                    _noteBeingModified.value = noteEntry
+                    selectedNote = toDatabaseEntry(noteEntry!!).asDomainModelEntry()
                 }
             }
         }
     }
 
-
     private val _isChanged: MutableLiveData<Boolean>
         get() = if (_mIsEdit.value!!) {
             MutableLiveData(_noteBeingModified.value != selectedNote)
         } else {
-            MutableLiveData(_noteBeingModified.value != noteRepository.emptyNote
-                .copy(color = _noteBeingModified.value?.color!!))
+            MutableLiveData(_noteBeingModified.value != noteRepository.emptyNote.copy(color = _noteBeingModified.value?.color!!))
         }
 
+    /**
+     * Return true or false if the contents of a Note have changed or not respectively.
+     */
     val isChanged: LiveData<Boolean> get() = _isChanged
 
     /**
-     * set time and date for Note's reminder
+     * Set the time and date for a Note's reminder
      *
-     * @param dateTime the date for reminder
+     * @param dateTime the date for the reminder
      */
     fun setDateTime(dateTime: Long) {
         _noteBeingModified.value = _noteBeingModified.value!!.copy(reminder = dateTime)
     }
 
     /**
-     * set Note's color
+     * Set a Note's color
      *
      * @param activity the note's containing activity
      */
-    fun pickColor(activity: Activity){
+    fun pickColor(activity: Activity) {
         selectColor(activity, _noteBeingModified.value!!)
     }
 
@@ -92,8 +93,8 @@ class EditNoteViewModel @AssistedInject constructor(
                 updateNote(_noteBeingModified.value!!)
             } else {
                 runBlocking {
-                    noteRepository.getLatestNote().collect { note ->
-                        scheduledNote = note!!
+                    noteRepository.getLatestNote().collect { noteEntry ->
+                        scheduledNote = noteEntry!!
                     }
                 }
                 createSchedule(context, scheduledNote)
@@ -102,8 +103,10 @@ class EditNoteViewModel @AssistedInject constructor(
             reminderCompletion.set(ReminderCompletion.ONGOING)
         }
     }
+
     /**
      * Delete a note from the database and cancel the active reminder
+     * associated with it, if any.
      */
     fun deleteNote() {
         if (_noteBeingModified.value!!.started) {
@@ -134,6 +137,13 @@ class EditNoteViewModel @AssistedInject constructor(
         }
     }
 
+    /**
+     * Insert a single note into the database. This is a blocking operation because
+     * the note has to be inserted into the database and its id created and
+     * retrieved for the next set of operations.
+     *
+     * @param note the note to be inserted
+     */
     private fun insertNote(note: Note) {
         val newNote = note.copy(date = currentDate().timeInMillis)
         runBlocking {
@@ -148,8 +158,9 @@ class EditNoteViewModel @AssistedInject constructor(
         }
     }
 
+
     private fun onNoteInserted() {
-        TODO("Not yet implemented")
+        _mIsEdit.value = true
     }
 
     private fun onNewNote() {
@@ -163,8 +174,8 @@ class EditNoteViewModel @AssistedInject constructor(
 
     companion object {
         fun provideFactory(
-            assistedFactory: AssistedFactory,
-            selectedNoteId: Int?
+                assistedFactory: AssistedFactory,
+                selectedNoteId: Int?
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -172,6 +183,4 @@ class EditNoteViewModel @AssistedInject constructor(
             }
         }
     }
-
-
 }
