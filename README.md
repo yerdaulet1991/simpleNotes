@@ -1,4 +1,4 @@
-<a href="https://codebeat.co/projects/github-com-yerdaulet1991-flashnews-main"><img alt="codebeat badge" src="https://codebeat.co/badges/12b4f02b-a401-4447-9f31-f9ee41c15355" /></a>
+[![codebeat badge](https://codebeat.co/badges/5fb63ef2-6590-419f-bd5e-19d9942688e1)](https://codebeat.co/projects/github-com-yerdaulet1991-simplenotes-master)
 # SimpleNotes
 * simple note-taking/reminder app aimed to showcase the use of modern android development best practices
 * MVVM architecture, Single Activity approach
@@ -10,7 +10,7 @@
 ## Libraries
 * Android Architecture Components - Room, ViewModel, WorkManager, LiveData, Lifecycles
 * Kotlin Coroutines 
-* Material design, Navigation Component
+* Material design, Navigation Components
 ## Screenshots
 ![simpleNote_5](https://user-images.githubusercontent.com/57751305/105806134-a10f4900-5fcd-11eb-88b9-07570a44e59f.png)
 ![simpleNote_2](https://user-images.githubusercontent.com/57751305/105806143-a371a300-5fcd-11eb-87e4-cad6959b1eae.png)
