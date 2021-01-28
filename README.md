@@ -1,7 +1,7 @@
 [![codebeat badge](https://codebeat.co/badges/5fb63ef2-6590-419f-bd5e-19d9942688e1)](https://codebeat.co/projects/github-com-yerdaulet1991-simplenotes-master)
 # SimpleNotes
 * simple note-taking/reminder app aimed to showcase the use of modern android development best practices
-* MVVM architecture, Single Activity approach
+* MVVM architecture
 * dependency injection - Dagger with Hilt
 ## Features
 * notes, reminders sorted by date 
